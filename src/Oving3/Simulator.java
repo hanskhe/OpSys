@@ -55,7 +55,7 @@ public class Simulator implements Constants
 		// TODO: You may want to extend this method somewhat.
 
 		System.out.print("Simulating...");
-		// Genererate the first process arrival event
+		// Generate the first process arrival event
 		eventQueue.insertEvent(new Event(NEW_PROCESS, 0));
 		// Process events until the simulation length is exceeded:
 		while (clock < simulationLength && !eventQueue.isEmpty()) {
@@ -72,7 +72,7 @@ public class Simulator implements Constants
 			if (clock < simulationLength) {
 				processEvent(event);
 			}
-
+            // TODO: Figure out how to handle additional events
 			// Note that the processing of most events should lead to new
 			// events being added to the event queue!
 
@@ -151,14 +151,14 @@ public class Simulator implements Constants
 	 * Simulates a process switch.
 	 */
 	private void switchProcess() {
-		// Incomplete
+		// TODO: Incomplete
 	}
 
 	/**
 	 * Ends the active process, and deallocates any resources allocated to it.
 	 */
 	private void endProcess() {
-		// Incomplete
+		// TODO: Incomplete
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class Simulator implements Constants
 	 * perform an I/O operation.
 	 */
 	private void processIoRequest() {
-		// Incomplete
+		// TODO: Incomplete
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class Simulator implements Constants
 	 * is done with its I/O operation.
 	 */
 	private void endIoOperation() {
-		// Incomplete
+		// TODO: Incomplete
 	}
 
 	/**

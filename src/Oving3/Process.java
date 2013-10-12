@@ -7,7 +7,7 @@ import java.util.*;
  * and methods for manipulating this data as well as
  * methods for displaying a process in the GUI.
  *
- * You will probably want to add more methods to this class.
+ * TODO: You will probably want to add more methods to this class.
  */
 public class Process implements Constants
 {
