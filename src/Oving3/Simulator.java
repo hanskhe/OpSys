@@ -168,16 +168,42 @@ public class Simulator implements Constants
 
         }
 
-        cpu.startProcess();
+        //Ny aktiv prosess
+        p = cpu.startProcess();
 
+        if(p != null){
+            //Køen var ikke tom
+
+            createEvent(p);
+        }
 	}
+
+    private void createEvent(Process p){
+        //Extra check for null-pointers:
+        if (p == null){
+            return;
+        }
+        if (p.getCpuTimeNeeded() > cpu.getMaxCpuTime() && p.getTimeToNextIoOperation() > cpu.getMaxCpuTime()){
+            //Process needs more time than possible in RR, and there will NOT be a IOBreak
+            eventQueue.insertEvent(new Event(SWITCH_PROCESS, clock + cpu.getMaxCpuTime()));
+        }
+        else if (p.getTimeToNextIoOperation() < p.getCpuTimeNeeded()){
+            eventQueue.insertEvent((new Event(IO_REQUEST, clock + p.getTimeToNextIoOperation())));
+        }
+        else{
+            eventQueue.insertEvent((new Event(END_PROCESS, clock + p.getCpuTimeNeeded())));
+        }
+    }
 
 	/**
 	 * Ends the active process, and deallocates any resources allocated to it.
 	 */
 	private void endProcess() {
-		// TODO: Incomplete
-	}
+		Process p = cpu.getActiveProcess();
+        cpu.removeActiveProcessFromCPU();
+        p.processLeftCPU(clock);
+        memory.processCompleted(p);
+    }
 
 	/**
 	 * Processes an event signifying that the active process needs to

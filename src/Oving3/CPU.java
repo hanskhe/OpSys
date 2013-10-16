@@ -47,5 +47,9 @@ public class CPU {
           activeProcess = null;
     }
 
+    public long getMaxCpuTime(){
+        return maxCpuTime;
+    }
+
 
 }

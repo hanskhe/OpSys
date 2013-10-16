@@ -129,4 +129,12 @@ public class Process implements Constants
     }
 
 	// Add more methods as needed
+
+    public long getTimeToNextIoOperation(){
+        return timeToNextIoOperation;
+    }
+
+    public long getCpuTimeNeeded(){
+        return getCpuTimeNeeded();
+    }
 }
