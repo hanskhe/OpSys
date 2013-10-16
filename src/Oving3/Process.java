@@ -46,7 +46,7 @@ public class Process implements Constants
 
 	/** The global time of the last event involving this process */
 	private long timeOfLastEvent;
-
+    private long eventEndTime;
 	/**
 	 * Creates a new process with given parameters. Other parameters are randomly
 	 * determined.
@@ -117,6 +117,16 @@ public class Process implements Constants
 		statistics.totalTimeSpentWaitingForMemory += timeSpentWaitingForMemory;
 		statistics.nofCompletedProcesses++;
 	}
+
+    public synchronized void processLeftCPU(long clock){
+        timeSpentInCpu += clock - timeOfLastEvent;
+        cpuTimeNeeded -= clock - timeOfLastEvent;
+        //Remove the time passed since we entered the CPU
+        timeToNextIoOperation -= clock - timeOfLastEvent;
+        timeOfLastEvent = clock;
+        eventEndTime = clock;
+        notifyAll();
+    }
 
 	// Add more methods as needed
 }

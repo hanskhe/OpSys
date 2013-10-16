@@ -22,6 +22,8 @@ public class Simulator implements Constants
 	private long avgArrivalInterval;
 	// Add member variables as needed
 
+    private CPU cpu;
+
 	/**
 	 * Constructs a scheduling simulator with the given parameters.
 	 * @param memoryQueue			The memory queue to be used.
@@ -36,12 +38,13 @@ public class Simulator implements Constants
 	 */
 	public Simulator(Queue memoryQueue, Queue cpuQueue, Queue ioQueue, long memorySize,
 			long maxCpuTime, long avgIoTime, long simulationLength, long avgArrivalInterval, Gui gui) {
-		this.simulationLength = simulationLength;
+        this.simulationLength = simulationLength;
 		this.avgArrivalInterval = avgArrivalInterval;
 		this.gui = gui;
 		statistics = new Statistics();
 		eventQueue = new EventQueue();
 		memory = new Memory(memoryQueue, memorySize, statistics);
+        cpu = new CPU(cpuQueue,maxCpuTime, this.gui);
 		clock = 0;
 		// Add code as needed
     }
@@ -132,11 +135,15 @@ public class Simulator implements Constants
 		while(p != null) {
 			
 			// TODO: Add this process to the CPU queue!
+            cpu.insertProcess(p);
 			// Also add new events to the event queue if needed
-
+            if (cpu.isIdle()){
+                switchProcess();
+            }
 			// Since we haven't implemented the CPU and I/O device yet,
 			// we let the process leave the system immediately, for now.
-			memory.processCompleted(p);
+
+			// ##### memory.processCompleted(p);
 			// Try to use the freed memory:
 			flushMemoryQueue();
 			// Update statistics
@@ -151,7 +158,18 @@ public class Simulator implements Constants
 	 * Simulates a process switch.
 	 */
 	private void switchProcess() {
-		// TODO: Incomplete
+		Process p = cpu.getActiveProcess();
+        cpu.removeActiveProcessFromCPU();
+
+        if (p != null){
+            p.processLeftCPU(clock);
+            //Har prosessert, tilbake i kø
+            cpu.insertProcess(p);
+
+        }
+
+        cpu.startProcess();
+
 	}
 
 	/**
