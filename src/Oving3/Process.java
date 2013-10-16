@@ -137,4 +137,22 @@ public class Process implements Constants
     public long getCpuTimeNeeded(){
         return getCpuTimeNeeded();
     }
+
+    public synchronized void enteredCPU(long clock){
+        timeSpentInReadyQueue += clock -timeOfLastEvent;
+        timeOfLastEvent = clock;
+        notifyAll();
+    }
+
+    public synchronized void enteredIOQueue(long clock){
+        timeSpentInReadyQueue += clock -timeOfLastEvent;
+        timeOfLastEvent = clock;
+        notifyAll();
+    }
+
+    public synchronized void enteredIO(long clock){
+        timeSpentWaitingForIo += clock - timeOfLastEvent;
+        timeOfLastEvent = clock;
+        notifyAll();
+    }
 }

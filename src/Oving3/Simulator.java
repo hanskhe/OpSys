@@ -23,6 +23,7 @@ public class Simulator implements Constants
 	// Add member variables as needed
 
     private CPU cpu;
+    private IO io;
 
 	/**
 	 * Constructs a scheduling simulator with the given parameters.
@@ -45,6 +46,7 @@ public class Simulator implements Constants
 		eventQueue = new EventQueue();
 		memory = new Memory(memoryQueue, memorySize, statistics);
         cpu = new CPU(cpuQueue,maxCpuTime, this.gui);
+        io = new IO(ioQueue, avgIoTime, this.gui);
 		clock = 0;
 		// Add code as needed
     }
@@ -173,7 +175,7 @@ public class Simulator implements Constants
 
         if(p != null){
             //Køen var ikke tom
-
+            p.enteredCPU(clock);
             createEvent(p);
         }
 	}
@@ -210,7 +212,19 @@ public class Simulator implements Constants
 	 * perform an I/O operation.
 	 */
 	private void processIoRequest() {
-		// TODO: Incomplete
+		Process p = cpu.getActiveProcess();
+        cpu.removeActiveProcessFromCPU();
+        p.processLeftCPU(clock);
+        //Process is out of CPU, to be sent to IO
+        p.enteredIOQueue(clock);
+        io.addToIOQueue(p);
+        if (io.getActiveIOProcess() == null){
+            io.startIO();
+            p.enteredIO(clock);
+            //Process now in IO. Event to find finish time
+            eventQueue.insertEvent(new Event(END_IO, clock+io.getIOTime()));
+        }
+       switchProcess();
 	}
 
 	/**
@@ -218,7 +232,7 @@ public class Simulator implements Constants
 	 * is done with its I/O operation.
 	 */
 	private void endIoOperation() {
-		// TODO: Incomplete
+
 	}
 
 	/**
