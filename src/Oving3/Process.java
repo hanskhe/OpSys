@@ -64,6 +64,8 @@ public class Process implements Constants
 		timeOfLastEvent = creationTime;
 		// Assign a process ID
 		processId = nextProcessId++;
+        double rand =  Math.random();
+        timeToNextIoOperation = (long)(rand * (avgIoInterval*2));
 		// Assign a pseudo-random color used by the GUI
 		int red = 64+(int)((processId*101)%128);
 		int green = 64+(int)((processId*47)%128);
@@ -116,6 +118,13 @@ public class Process implements Constants
 	public void updateStatistics(Statistics statistics) {
 		statistics.totalTimeSpentWaitingForMemory += timeSpentWaitingForMemory;
 		statistics.nofCompletedProcesses++;
+        statistics.totalTimeInReadyQueue += timeSpentInReadyQueue;
+        statistics.totalCpuTime += timeSpentInCpu;
+        statistics.totalTimeWaitingForIo += timeSpentWaitingForIo;
+        statistics.totalIoTime += timeSpentInIo;
+        statistics.totalNoOfTimesInReadyQueue += nofTimesInReadyQueue;
+        statistics.totalNoOfTimesInIoQueue += nofTimesInIoQueue;
+
 	}
 
     public synchronized void processLeftCPU(long clock){

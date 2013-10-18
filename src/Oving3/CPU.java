@@ -13,11 +13,13 @@ public class CPU {
     private long maxCpuTime;
     private Process activeProcess;
     private Gui gui;
+    private Statistics statistics;
 
-    public CPU(Queue cpuQueue, long maxCpuTime, Gui gui){
+    public CPU(Queue cpuQueue, long maxCpuTime, Gui gui, Statistics statistics){
         this.cpuQueue = cpuQueue;
         this.maxCpuTime = maxCpuTime;
         this.gui = gui;
+        this.statistics = statistics;
     }
 
     public void insertProcess(Process p){
@@ -52,6 +54,13 @@ public class CPU {
 
     public long getMaxCpuTime(){
         return maxCpuTime;
+    }
+
+    public void updateTime(long timePassed){
+        statistics.cpuQueueLengthTime += this.cpuQueue.getQueueLength() * timePassed;
+        if (this.cpuQueue.getQueueLength() > statistics.largestCPUQueue){
+            this.statistics.largestCPUQueue = this.cpuQueue.getQueueLength();
+        }
     }
 
 

@@ -16,7 +16,40 @@ public class Statistics
 	public long memoryQueueLengthTime = 0;
 	/** The largest memory queue length that has occured */
 	public long memoryQueueLargestLength = 0;
-    
+
+    //Counters that are needed to answer the assignment, but that are not included in the framework
+    /**Number of times the round robin has switched*/
+    public long nofProcessChanges = 0;
+
+    public long ioQueueLengthTime = 0;
+
+    public long cpuQueueLengthTime = 0;
+
+    public long largestIOQueue = 0;
+
+    public long largestCPUQueue = 0;
+
+    public long nofCompletedIoOperations = 0;
+
+    public long totalTimeSpentProcessing = 0;
+
+    public long totalTimeInReadyQueue = 0;
+
+    public long totalCpuTime = 0;
+
+    public long totalTimeWaitingForIo = 0;
+
+    public long totalIoTime = 0;
+
+    public long totalNoOfTimesInReadyQueue = 0;
+
+    public long totalNoOfTimesInIoQueue = 0;
+
+
+
+
+
+
 	/**
 	 * Prints out a report summarizing all collected data about the simulation.
 	 * @param simulationLength	The number of milliseconds that the simulation covered.
@@ -30,6 +63,7 @@ public class Statistics
 		System.out.println();
 		System.out.println("Largest occuring memory queue length:                         "+memoryQueueLargestLength);
 		System.out.println("Average memory queue length:                                  "+(float)memoryQueueLengthTime/simulationLength);
+        System.out.println("Total time CPU was idle:                                      "+(float)(simulationLength - totalTimeSpentProcessing));
 		if(nofCompletedProcesses > 0) {
 			System.out.println("Average # of times a process has been placed in memory queue: "+1);
 			System.out.println("Average time spent waiting for memory per process:            "+

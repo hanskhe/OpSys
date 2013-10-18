@@ -45,8 +45,8 @@ public class Simulator implements Constants
 		statistics = new Statistics();
 		eventQueue = new EventQueue();
 		memory = new Memory(memoryQueue, memorySize, statistics);
-        cpu = new CPU(cpuQueue,maxCpuTime, this.gui);
-        io = new IO(ioQueue, avgIoTime, this.gui);
+        cpu = new CPU(cpuQueue,maxCpuTime, this.gui, this.statistics);
+        io = new IO(ioQueue, avgIoTime, this.gui, this.statistics);
 		clock = 0;
 		// Add code as needed
     }
@@ -73,6 +73,8 @@ public class Simulator implements Constants
 			// Let the memory unit and the GUI know that time has passed
 			memory.timePassed(timeDifference);
 			gui.timePassed(timeDifference);
+            io.updateTime(timeDifference);
+            cpu.updateTime(timeDifference);
 			// Deal with the event
 			if (clock < simulationLength) {
 				processEvent(event);
@@ -135,17 +137,11 @@ public class Simulator implements Constants
 		Process p = memory.checkMemory(clock);
 		// As long as there is enough memory, processes are moved from the memory queue to the cpu queue
 		while(p != null) {
-			
-			// TODO: Add this process to the CPU queue!
             cpu.insertProcess(p);
 			// Also add new events to the event queue if needed
             if (cpu.isIdle()){
                 switchProcess();
             }
-			// Since we haven't implemented the CPU and I/O device yet,
-			// we let the process leave the system immediately, for now.
-
-			// ##### memory.processCompleted(p);
 			// Try to use the freed memory:
 			flushMemoryQueue();
 			// Update statistics
@@ -190,11 +186,11 @@ public class Simulator implements Constants
             //Process needs more time than possible in RR, and there will NOT be a IOBreak
             eventQueue.insertEvent(new Event(SWITCH_PROCESS, clock + cpu.getMaxCpuTime()));
         }
-        else if (p.getTimeToNextIoOperation() < p.getCpuTimeNeeded()){
-            eventQueue.insertEvent((new Event(IO_REQUEST, clock + p.getTimeToNextIoOperation())));
+        else if (p.getTimeToNextIoOperation() > p.getCpuTimeNeeded()){
+            eventQueue.insertEvent((new Event(END_PROCESS, clock + p.getCpuTimeNeeded())));
         }
         else{
-            eventQueue.insertEvent((new Event(END_PROCESS, clock + p.getCpuTimeNeeded())));
+            eventQueue.insertEvent((new Event(IO_REQUEST, clock + p.getTimeToNextIoOperation())));
         }
     }
 
@@ -206,6 +202,8 @@ public class Simulator implements Constants
         cpu.removeActiveProcessFromCPU();
         p.processLeftCPU(clock);
         memory.processCompleted(p);
+        p.updateStatistics(statistics);
+
     }
 
 	/**
@@ -213,6 +211,7 @@ public class Simulator implements Constants
 	 * perform an I/O operation.
 	 */
 	private void processIoRequest() {
+        System.out.println("ProcessIoRequest");
 		Process p = cpu.getActiveProcess();
         cpu.removeActiveProcessFromCPU();
         p.processLeftCPU(clock);
@@ -220,6 +219,7 @@ public class Simulator implements Constants
         p.enteredIOQueue(clock);
         io.addToIOQueue(p);
         if (io.getActiveIOProcess() == null){
+            System.out.println("getActive == null");
             io.startIO();
             p.enteredIO(clock);
             //Process now in IO. Event to find finish time
@@ -233,6 +233,8 @@ public class Simulator implements Constants
 	 * is done with its I/O operation.
 	 */
 	private void endIoOperation() {
+        System.out.println("EndIoOperation");
+        statistics.nofCompletedIoOperations++;
         Process p = io.getActiveIOProcess();
         io.removeActiveProcessFromIO();
         p.processLeftIO(clock);
