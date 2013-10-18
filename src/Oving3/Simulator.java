@@ -167,6 +167,7 @@ public class Simulator implements Constants
             p.processLeftCPU(clock);
             //Har prosessert, tilbake i kø
             cpu.insertProcess(p);
+            p.enteredCpuQueue(clock);
 
         }
 
@@ -232,7 +233,19 @@ public class Simulator implements Constants
 	 * is done with its I/O operation.
 	 */
 	private void endIoOperation() {
-
+        Process p = io.getActiveIOProcess();
+        io.removeActiveProcessFromIO();
+        p.processLeftIO(clock);
+        cpu.insertProcess(p);
+        p.enteredCpuQueue(clock);
+        if (cpu.isIdle()){
+            switchProcess();
+        }
+        p = io.startIO();
+        if (p != null){
+            p.enteredIO(clock);
+            eventQueue.insertEvent(new Event(END_IO, clock + io.getIOTime()));
+        }
 	}
 
 	/**

@@ -36,15 +36,23 @@ public class IO {
     }
     public Process startIO(){
         if (!ioQueue.isEmpty()){
+            System.out.println("IO");
             activeIOProcess = (Process)ioQueue.removeNext();
+            gui.setIoActive(activeIOProcess);
             return activeIOProcess;
         }
         else{
             activeIOProcess = null;
+            gui.setIoActive(activeIOProcess);
             return activeIOProcess;
         }
     }
     public Process getActiveIOProcess(){
         return activeIOProcess;
+    }
+
+    public void removeActiveProcessFromIO(){
+        activeIOProcess = null;
+        gui.setIoActive(activeIOProcess);
     }
 }

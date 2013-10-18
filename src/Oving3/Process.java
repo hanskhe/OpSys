@@ -128,6 +128,15 @@ public class Process implements Constants
         notifyAll();
     }
 
+    public synchronized void processLeftIO(long clock){
+        timeSpentInIo += clock - timeOfLastEvent;
+        //Calc next IOs timeneed
+        timeToNextIoOperation = (long)(Math.random() * avgIoInterval);
+        timeOfLastEvent = clock;
+        notifyAll();
+
+    }
+
 	// Add more methods as needed
 
     public long getTimeToNextIoOperation(){
@@ -135,7 +144,7 @@ public class Process implements Constants
     }
 
     public long getCpuTimeNeeded(){
-        return getCpuTimeNeeded();
+        return cpuTimeNeeded;
     }
 
     public synchronized void enteredCPU(long clock){
@@ -152,6 +161,12 @@ public class Process implements Constants
 
     public synchronized void enteredIO(long clock){
         timeSpentWaitingForIo += clock - timeOfLastEvent;
+        timeOfLastEvent = clock;
+        notifyAll();
+    }
+
+    public synchronized void enteredCpuQueue(long clock){
+        //No time used to allocate memory
         timeOfLastEvent = clock;
         notifyAll();
     }

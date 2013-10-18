@@ -31,10 +31,12 @@ public class CPU {
     public Process startProcess(){
         if (!cpuQueue.isEmpty()){
             activeProcess = (Process)cpuQueue.removeNext();
+            gui.setCpuActive(activeProcess);
             return activeProcess;
         }
         else{
             activeProcess = null;
+            gui.setCpuActive(activeProcess);
             return activeProcess;
         }
     }
@@ -45,6 +47,7 @@ public class CPU {
 
     public void removeActiveProcessFromCPU(){
           activeProcess = null;
+           gui.setCpuActive(activeProcess);
     }
 
     public long getMaxCpuTime(){
