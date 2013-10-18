@@ -25,10 +25,10 @@ public class IO {
     public void addToIOQueue(Process p){
          ioQueue.insert(p);
          System.out.println("Inserted IO");
-         if (activeIOProcess == null){
-             System.out.println("No Active IO");
-             startIO();
-         }
+         //if (activeIOProcess == null){
+             //System.out.println("No Active IO");
+           //  startIO();
+         //}
     }
     public long getIOTime(){
         //Generating numbers that will average at avgIoTime
